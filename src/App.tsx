@@ -1,10 +1,11 @@
 import { Routes, Route, Outlet, Link, useNavigate, redirect, useLocation } from 'react-router-dom';
 import { useLogto, LogtoProvider, LogtoConfig,useHandleSignInCallback } from '@logto/react';
 import { get } from 'http';
-const config: LogtoConfig = {
-  endpoint: process.env.REACT_APP_LOGTO_ENDPOINT || 'https://logto.dev',
-  appId: process.env.REACT_APP_LOGTO_APP_ID || '',
-  resources: [process.env.REACT_APP_LOGTO_RESOURCE || ''],
+
+const config = {
+  endpoint: import.meta.env.REACT_APP_LOGTO_ENDPOINT || 'https://logto.dev',
+  appId: import.meta.env.REACT_APP_LOGTO_APP_ID || '',
+  resources: [import.meta.env.REACT_APP_LOGTO_RESOURCE || ''],
   scopes: ['openid']
 };
 
