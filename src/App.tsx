@@ -3,9 +3,9 @@ import { useLogto, LogtoProvider, LogtoConfig,useHandleSignInCallback } from '@l
 import { get } from 'http';
 
 const config = {
-  endpoint: import.meta.env.REACT_APP_LOGTO_ENDPOINT || 'https://logto.dev',
-  appId: import.meta.env.REACT_APP_LOGTO_APP_ID || '',
-  resources: [import.meta.env.REACT_APP_LOGTO_RESOURCE || ''],
+  endpoint: import.meta.env.VITE_LOGTO_ENDPOINT || 'https://logto.dev',
+  appId: import.meta.env.VITE_LOGTO_APP_ID || '',
+  resources: [import.meta.env.VITE_LOGTO_RESOURCE || ''],
   scopes: ['openid']
 };
 
