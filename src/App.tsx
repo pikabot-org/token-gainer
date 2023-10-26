@@ -2,6 +2,7 @@ import { Routes, Route, Outlet, Link, useNavigate, redirect, useLocation } from 
 import { useLogto, LogtoProvider, LogtoConfig, useHandleSignInCallback } from '@logto/react';
 import { useState, useEffect } from "react";
 import Pusher from "pusher-js"
+import type { type } from 'os';
 
 const config = {
   endpoint: import.meta.env.VITE_LOGTO_ENDPOINT || 'https://logto.dev',
@@ -92,9 +93,14 @@ function Home() {
   );
 }
 
+type Event = {
+  type: string,
+  data: string
+}
+
 function PusherPage() {
   const { fetchUserInfo, isAuthenticated, getAccessToken } = useLogto();
-
+  const [ channelName, setChannelName ] = useState<string>("");
   useEffect(() => {
     let loadPusher = async () => {
       if (isAuthenticated) {
@@ -119,8 +125,10 @@ function PusherPage() {
         })
 
         channel.bind_global(function (event: string, data: any) {
-          console.log(`The event ${event} was triggered with data ${data}`);
+          let asJson = JSON.stringify(data); 
+          console.log(`The event ${event} was triggered with data ${asJson}`);
         })
+        setChannelName(channelName);
       }
     }
 
@@ -132,6 +140,7 @@ function PusherPage() {
   return (
     <div>
       <h2>Pusher</h2>
+      <p>Channel name: <code>{channelName}</code></p>
     </div>
   );
 }
