@@ -1,6 +1,7 @@
 import { Routes, Route, Outlet, Link, useNavigate, redirect, useLocation } from 'react-router-dom';
-import { useLogto, LogtoProvider, LogtoConfig,useHandleSignInCallback } from '@logto/react';
-import { get } from 'http';
+import { useLogto, LogtoProvider, LogtoConfig, useHandleSignInCallback } from '@logto/react';
+import { useState, useEffect } from "react";
+import Pusher from "pusher-js"
 
 const config = {
   endpoint: import.meta.env.VITE_LOGTO_ENDPOINT || 'https://logto.dev',
@@ -8,6 +9,7 @@ const config = {
   resources: [import.meta.env.VITE_LOGTO_RESOURCE || ''],
   scopes: ['openid']
 };
+
 
 export default function App() {
   return (
@@ -22,6 +24,7 @@ export default function App() {
             <Route path="singin" element={<SignIn />} />
             <Route path="callback" element={<Callback />} />
             <Route path="token" element={<Token />} />
+            <Route path="pusher" element={<PusherPage />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
         </Routes>
@@ -42,6 +45,9 @@ function Layout() {
           </li>
           <li>
             <Link to="/token">Token</Link>
+          </li>
+          <li>
+            <Link to="/pusher">Pusher</Link>
           </li>
         </ul>
       </nav>
@@ -86,21 +92,51 @@ function Home() {
   );
 }
 
-function About() {
+function PusherPage() {
+  const { fetchUserInfo, isAuthenticated, getAccessToken } = useLogto();
+
+  useEffect(() => {
+    let loadPusher = async () => {
+      if (isAuthenticated) {
+        let user = await fetchUserInfo();
+        console.log(user);
+        console.log("Connecting to pusher");
+        let token = await getAccessToken("https://api.nevi.ai");
+        const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY || '', {
+          cluster: "eu",
+          authEndpoint: import.meta.env.VITE_PUSHER_AUTH_ENDPOINT || 'https://api.nevi.ai/pusher/auth',
+          auth: {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
+        })
+        let channelName = "private-" + user?.sub;
+        console.log("Subscribing to channel " + channelName);
+        const channel = pusher.subscribe(channelName);
+        channel.bind("pusher:subscription_succeeded", () => {
+          console.log("subscription_succeeded")
+        })
+
+        channel.bind_global(function (event: string, data: any) {
+          console.log(`The event ${event} was triggered with data ${data}`);
+        })
+      }
+    }
+
+    loadPusher().catch((err) => {
+      console.log(err)
+    })
+  }, [fetchUserInfo, isAuthenticated, getAccessToken]);
+
   return (
     <div>
-      <h2>About</h2>
+      <h2>Pusher</h2>
     </div>
   );
 }
 
-function Dashboard() {
-  return (
-    <div>
-      <h2>Dashboard</h2>
-    </div>
-  );
-}
+
 
 function NoMatch() {
   return (
@@ -113,7 +149,6 @@ function NoMatch() {
   );
 }
 
-import { useState, useEffect } from "react";
 
 function Token() {
   const { getAccessToken, isAuthenticated } = useLogto();
@@ -132,7 +167,7 @@ function Token() {
   return (
     <>
       <h2>Token</h2>
-      <textarea value={token} readOnly style={{width: "500px"}}/>
+      <textarea value={token} readOnly style={{ width: "500px" }} />
       <br />
       <button onClick={() => navigator.clipboard.writeText(token)}>Copy</button>
     </>
