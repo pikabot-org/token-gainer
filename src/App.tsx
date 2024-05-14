@@ -104,7 +104,7 @@ function PusherPage() {
   useEffect(() => {
     let loadPusher = async () => {
       if (isAuthenticated) {
-        let user = await fetchUserInfo
+        let user = await fetchUserInfo()
         console.log(user);
         console.log("Connecting to pusher");
         let token = await getAccessToken(import.meta.env.VITE_LOGTO_RESOURCE || "https://api.nevi.ai");
