@@ -104,10 +104,10 @@ function PusherPage() {
   useEffect(() => {
     let loadPusher = async () => {
       if (isAuthenticated) {
-        let user = await fetchUserInfo();
+        let user = await fetchUserInfo
         console.log(user);
         console.log("Connecting to pusher");
-        let token = await getAccessToken("https://api.nevi.ai");
+        let token = await getAccessToken(import.meta.env.VITE_LOGTO_RESOURCE || "https://api.nevi.ai");
         const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY || '', {
           cluster: "eu",
           authEndpoint: import.meta.env.VITE_PUSHER_AUTH_ENDPOINT || 'https://api.nevi.ai/pusher/auth',
