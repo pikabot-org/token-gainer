@@ -166,7 +166,7 @@ function Token() {
   useEffect(() => {
     const fetchToken = async () => {
       if (isAuthenticated) {
-        const accessToken = await getAccessToken("https://api.nevi.ai");
+        const accessToken = await getAccessToken(import.meta.env.VITE_LOGTO_RESOURCE || "https://api.nevi.ai");
         setToken(accessToken || "");
       }
     };
