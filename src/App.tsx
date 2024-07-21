@@ -26,6 +26,7 @@ export default function App() {
             <Route path="callback" element={<Callback />} />
             <Route path="token" element={<Token />} />
             <Route path="pusher" element={<PusherPage />} />
+            <Route path="signout" element={<SignOut />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
         </Routes>
@@ -49,6 +50,9 @@ function Layout() {
           </li>
           <li>
             <Link to="/pusher">Pusher</Link>
+          </li>
+          <li>
+            <Link to="/signout">Sign out</Link>
           </li>
         </ul>
       </nav>
@@ -84,6 +88,20 @@ const SignIn = () => {
     </button>
   );
 };
+
+const SignOut = () => {
+  const { signOut, isAuthenticated } = useLogto();
+
+  if (!isAuthenticated) {
+    return <div>Not signed in</div>;
+  }
+
+  return (
+    <button onClick={() => signOut(location + "/")}>
+      Sign Out
+    </button>
+  );
+}
 
 function Home() {
   return (
